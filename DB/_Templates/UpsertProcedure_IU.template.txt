@@ -1,0 +1,119 @@
+CREATE PROCEDURE [<SCHEMA_NAME>].[<PROCEDURE_NAME>]
+AS
+BEGIN
+	SET NOCOUNT ON
+
+	DECLARE @StartDate DATETIME = getdate()
+	DECLARE @RowsUpdated INT = 0
+	DECLARE @RowsInserted INT = 0
+	DECLARE @ErrorMessage NVARCHAR(4000)
+
+	BEGIN TRY
+		BEGIN TRAN
+
+		INSERT INTO [Logging].[Process] (
+			StartDate
+			,[DBName]
+			,[ObjectName]
+			,[Action]
+			)
+		SELECT @StartDate AS StartDate
+			,db_name() AS DBName
+			,OBJECT_SCHEMA_NAME(@@PROCID) + '.' + OBJECT_NAME(@@PROCID) AS ObjectName
+			,'Start' AS [Action]
+
+		IF OBJECT_ID('tempdb..#tmp_<TABLE_NAME>') IS NOT NULL
+			DROP TABLE #tmp_<TABLE_NAME>;
+
+		WITH LZ
+		AS (
+			SELECT [FIT_DWH_ID] AS LZ_id
+				,BINARY_CHECKSUM(<BUSINESS_KEYS>) AS LZ_CheckSum_BK
+				,BINARY_CHECKSUM(<ALL_ATTRIBUTES>) AS LZ_CheckSum_AllAttributes
+				,<BUSINESS_KEYS>
+			FROM [stg_<SCHEMA_NAME>].[<TABLE_NAME>]
+			)
+		SELECT LZ.LZ_id
+			,LZ.LZ_CheckSum_BK
+			,LZ.LZ_CheckSum_AllAttributes
+			,ST.FIT_DWH_ID AS ST_id
+			,ST.CheckSum_BK AS ST_CheckSum_BK
+			,ST.CheckSum_AllAttributes AS ST_CheckSum_AllAttributes
+		INTO #tmp_<TABLE_NAME>
+		FROM LZ
+		LEFT OUTER JOIN [<SCHEMA_NAME>].[<TABLE_NAME>] ST ON Lz.LZ_CheckSum_BK = ST.CheckSum_BK
+        <BK_JOIN_CLAUSE>
+
+		-- new records => insert
+		INSERT INTO [<SCHEMA_NAME>].[<TABLE_NAME>] (
+			<ALL_ATTRIBUTES>
+			,[CheckSum_BK]
+			,[CheckSum_AllAttributes]
+			)
+		SELECT <ALL_ATTRIBUTES>
+			,LZ_CheckSum_BK
+			,LZ_CheckSum_AllAttributes
+		FROM #tmp_<TABLE_NAME> T
+		JOIN [stg_<SCHEMA_NAME>].[<TABLE_NAME>] LZ ON T.LZ_id = LZ.[FIT_DWH_ID]
+		WHERE ST_CheckSum_BK IS NULL
+
+		SELECT @RowsInserted = @@ROWCOUNT
+
+		-- changed rows => update
+		UPDATE ST
+		SET <UPDATE_CLAUSE>
+			,CheckSum_BK = T.LZ_CheckSum_BK
+			,CheckSum_AllAttributes = T.LZ_CheckSum_AllAttributes
+			,UpdateDate = @StartDate
+		FROM #tmp_<TABLE_NAME> T
+		JOIN [stg_<SCHEMA_NAME>].[<TABLE_NAME>] LZ ON T.LZ_id = LZ.[FIT_DWH_ID]
+		JOIN [<SCHEMA_NAME>].[<TABLE_NAME>] ST ON T.ST_id = ST.[FIT_DWH_ID]
+		WHERE T.LZ_CheckSum_AllAttributes <> T.ST_CheckSum_AllAttributes
+
+		SELECT @RowsUpdated = @@ROWCOUNT
+
+		INSERT INTO [Logging].[Process] (
+			StartDate
+			,[DBName]
+			,[ObjectName]
+			,[Action]
+			,[RowsInserted]
+			,[RowsUpdated]
+			)
+		SELECT @StartDate AS StartDate
+			,db_name() AS DBName
+			,OBJECT_SCHEMA_NAME(@@PROCID) + '.' + OBJECT_NAME(@@PROCID) AS ObjectName
+			,'Stop' AS [Action]
+			,@RowsInserted AS RowsInserted
+			,@RowsUpdated AS RowsUpdated
+
+		COMMIT
+	END TRY
+
+	BEGIN CATCH
+        ROLLBACK;
+
+		SELECT @ErrorMessage = N'Error occured during [<SCHEMA_NAME>].[<PROCEDURE_NAME>]. Message: ' + ERROR_MESSAGE();
+
+		INSERT INTO [Logging].[Process] (
+			StartDate
+			,[DBName]
+			,[ObjectName]
+			,[Action]
+			,[Message]
+			)
+		SELECT @StartDate AS StartDate
+			,db_name() AS DBName
+			,OBJECT_SCHEMA_NAME(@@PROCID) + '.' + OBJECT_NAME(@@PROCID) AS ObjectName
+			,'Error' AS [Action]
+			,ERROR_MESSAGE() AS Message;
+
+		EXEC msdb.dbo.sp_notify_operator  
+		   @profile_name = N'DBA',
+		   @name = N'DBA',
+		   @subject = N'Error in Stored Procedure',  
+		   @body = @ErrorMessage;
+
+		THROW;
+	END CATCH
+END
