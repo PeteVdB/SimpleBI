@@ -6,19 +6,37 @@
 			<xsd:element minOccurs="0" maxOccurs="unbounded" name="Attribute">
 				<xsd:complexType>
 					<xsd:sequence>
-						<xsd:element name="Schema" type="xsd:string"/>
-						<xsd:element name="Table" type="xsd:string"/>
-						<xsd:element name="Column" type="xsd:string"/>
+						<xsd:element name="Schema" type="xsd:string" />
+						<xsd:element name="Table" type="xsd:string" />
+						<xsd:element name="Column" type="xsd:string" />
 						<xsd:element name="Function" type="xsd:string"/>
 						<xsd:element name="SourceColumn" type="xsd:string"/>
-						<xsd:element name="Ordinal_Position" type="xsd:string"/>
-						<xsd:element name="IsNullable" type="xsd:string"/>
-						<xsd:element name="IsBusinessKey" type="xsd:string"/>
-						<xsd:element name="DataType" type="xsd:string"/>
-						<xsd:element name="Character_maximum_length" type="xsd:string"/>
-						<xsd:element name="Numeric_Precision" type="xsd:string"/>
-						<xsd:element name="Numeric_Scale" type="xsd:string"/>
-						<xsd:element name="DateTime_Precision" type="xsd:string"/>
+						<xsd:element name="Ordinal_Position" type="xsd:integer"/>
+						<xsd:element name="IsNullable" type="xsd:boolean" />
+						<xsd:element name="IsBusinessKey" type="xsd:boolean" />
+						<xsd:element name="DataType">
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:enumeration value="NVARCHAR"/>
+									<xsd:enumeration value="VARCHAR"/>
+									<xsd:enumeration value="INT"/>
+									<xsd:enumeration value="DECIMAL"/>
+									<xsd:enumeration value="DATETIME"/>
+									<xsd:enumeration value="DATETIME2"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="Character_maximum_length">
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:integer">
+									<xsd:minInclusive value="0"/>
+									<xsd:maxInclusive value="4000"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="Numeric_Precision" type="xsd:integer" />
+						<xsd:element name="Numeric_Scale" type="xsd:integer" />
+						<xsd:element name="DateTime_Precision" type="xsd:integer" />
 					</xsd:sequence>
 				</xsd:complexType>
 			</xsd:element>

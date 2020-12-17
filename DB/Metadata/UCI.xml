@@ -174,7 +174,7 @@
 		<Ordinal_Position>4</Ordinal_Position>
 		<IsNullable>1</IsNullable>
 		<IsBusinessKey>0</IsBusinessKey>
-		<DataType>datetime</DataType>
+		<DataType>DATETIME</DataType>
 		<Character_maximum_length>0</Character_maximum_length>
 		<Numeric_Precision>0</Numeric_Precision>
 		<Numeric_Scale>0</Numeric_Scale>
