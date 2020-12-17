@@ -31,7 +31,7 @@ BEGIN
 				,BINARY_CHECKSUM(<BUSINESS_KEYS>) AS LZ_CheckSum_BK
 				,BINARY_CHECKSUM(<ALL_ATTRIBUTES>) AS LZ_CheckSum_AllAttributes
 				,<BUSINESS_KEYS>
-			FROM [stg_<SCHEMA_NAME>].[<TABLE_NAME>]
+			FROM [LZ_<SCHEMA_NAME>].[<TABLE_NAME>]
 			)
 		SELECT LZ.LZ_id
 			,LZ.LZ_CheckSum_BK
@@ -54,7 +54,7 @@ BEGIN
 			,LZ_CheckSum_BK
 			,LZ_CheckSum_AllAttributes
 		FROM #tmp_<TABLE_NAME> T
-		JOIN [stg_<SCHEMA_NAME>].[<TABLE_NAME>] LZ WITH (TABLOCKX) ON T.LZ_id = LZ.[FIT_DWH_ID]
+		JOIN [LZ_<SCHEMA_NAME>].[<TABLE_NAME>] LZ WITH (TABLOCKX) ON T.LZ_id = LZ.[FIT_DWH_ID]
 		WHERE ST_CheckSum_BK IS NULL
 
 		SELECT @RowsInserted = @@ROWCOUNT
@@ -66,7 +66,7 @@ BEGIN
 			,CheckSum_AllAttributes = T.LZ_CheckSum_AllAttributes
 			,UpdateDate = @StartDate
 		FROM #tmp_<TABLE_NAME> T
-		JOIN [stg_<SCHEMA_NAME>].[<TABLE_NAME>] LZ ON T.LZ_id = LZ.[FIT_DWH_ID]
+		JOIN [LZ_<SCHEMA_NAME>].[<TABLE_NAME>] LZ ON T.LZ_id = LZ.[FIT_DWH_ID]
 		JOIN [<SCHEMA_NAME>].[<TABLE_NAME>] ST ON T.ST_id = ST.[FIT_DWH_ID]
 		WHERE T.LZ_CheckSum_AllAttributes <> T.ST_CheckSum_AllAttributes
 
@@ -115,12 +115,6 @@ BEGIN
 			,OBJECT_SCHEMA_NAME(@@PROCID) + '.' + OBJECT_NAME(@@PROCID) AS ObjectName
 			,'Error' AS [Action]
 			,ERROR_MESSAGE() AS Message;
-
-		EXEC msdb.dbo.sp_notify_operator  
-		   @profile_name = N'DBA',
-		   @name = N'DBA',
-		   @subject = N'Error in Stored Procedure',  
-		   @body = @ErrorMessage;
 
 		THROW;
 	END CATCH
