@@ -178,19 +178,19 @@
 		<Character_maximum_length>0</Character_maximum_length>
 		<Numeric_Precision>0</Numeric_Precision>
 		<Numeric_Scale>0</Numeric_Scale>
-		<DateTime_Precision>0</DateTime_Precision>
+		<DateTime_Precision>3</DateTime_Precision>
 	</Attribute>
 	<Attribute>
 		<Schema>UCI</Schema>
 		<Table>Riders</Table>
-		<Column>Gender</Column>
-		<Function/>
+		<Column>Birth date year</Column>
+		<Function>Year({0})</Function>
 		<SourceColumn/>
 		<Ordinal_Position>5</Ordinal_Position>
 		<IsNullable>1</IsNullable>
 		<IsBusinessKey>0</IsBusinessKey>
-		<DataType>NVARCHAR</DataType>
-		<Character_maximum_length>100</Character_maximum_length>
+		<DataType>DATETIME</DataType>
+		<Character_maximum_length>0</Character_maximum_length>
 		<Numeric_Precision>0</Numeric_Precision>
 		<Numeric_Scale>0</Numeric_Scale>
 		<DateTime_Precision>3</DateTime_Precision>
@@ -198,10 +198,40 @@
 	<Attribute>
 		<Schema>UCI</Schema>
 		<Table>Riders</Table>
+		<Column>Birth Year</Column>
+		<Function>Year({0})</Function>
+		<SourceColumn>Birth date</SourceColumn>
+		<Ordinal_Position>6</Ordinal_Position>
+		<IsNullable>1</IsNullable>
+		<IsBusinessKey>0</IsBusinessKey>
+		<DataType>DATETIME</DataType>
+		<Character_maximum_length>0</Character_maximum_length>
+		<Numeric_Precision>0</Numeric_Precision>
+		<Numeric_Scale>0</Numeric_Scale>
+		<DateTime_Precision>3</DateTime_Precision>
+	</Attribute>
+	<Attribute>
+		<Schema>UCI</Schema>
+		<Table>Riders</Table>
+		<Column>Gender</Column>
+		<Function/>
+		<SourceColumn/>
+		<Ordinal_Position>7</Ordinal_Position>
+		<IsNullable>1</IsNullable>
+		<IsBusinessKey>0</IsBusinessKey>
+		<DataType>NVARCHAR</DataType>
+		<Character_maximum_length>100</Character_maximum_length>
+		<Numeric_Precision>0</Numeric_Precision>
+		<Numeric_Scale>0</Numeric_Scale>
+		<DateTime_Precision>0</DateTime_Precision>
+	</Attribute>
+	<Attribute>
+		<Schema>UCI</Schema>
+		<Table>Riders</Table>
 		<Column>Category</Column>
 		<Function/>
 		<SourceColumn/>
-		<Ordinal_Position>6</Ordinal_Position>
+		<Ordinal_Position>8</Ordinal_Position>
 		<IsNullable>1</IsNullable>
 		<IsBusinessKey>0</IsBusinessKey>
 		<DataType>NVARCHAR</DataType>
@@ -216,7 +246,7 @@
 		<Column>Country</Column>
 		<Function/>
 		<SourceColumn/>
-		<Ordinal_Position>7</Ordinal_Position>
+		<Ordinal_Position>9</Ordinal_Position>
 		<IsNullable>1</IsNullable>
 		<IsBusinessKey>0</IsBusinessKey>
 		<DataType>NVARCHAR</DataType>
@@ -231,7 +261,7 @@
 		<Column>Continent</Column>
 		<Function/>
 		<SourceColumn/>
-		<Ordinal_Position>8</Ordinal_Position>
+		<Ordinal_Position>10</Ordinal_Position>
 		<IsNullable>1</IsNullable>
 		<IsBusinessKey>0</IsBusinessKey>
 		<DataType>NVARCHAR</DataType>
@@ -246,7 +276,7 @@
 		<Column>Team Code</Column>
 		<Function/>
 		<SourceColumn/>
-		<Ordinal_Position>9</Ordinal_Position>
+		<Ordinal_Position>11</Ordinal_Position>
 		<IsNullable>1</IsNullable>
 		<IsBusinessKey>0</IsBusinessKey>
 		<DataType>NVARCHAR</DataType>
@@ -261,7 +291,7 @@
 		<Column>Team Name</Column>
 		<Function/>
 		<SourceColumn/>
-		<Ordinal_Position>10</Ordinal_Position>
+		<Ordinal_Position>12</Ordinal_Position>
 		<IsNullable>1</IsNullable>
 		<IsBusinessKey>0</IsBusinessKey>
 		<DataType>NVARCHAR</DataType>
@@ -276,7 +306,7 @@
 		<Column>UCIID</Column>
 		<Function/>
 		<SourceColumn/>
-		<Ordinal_Position>11</Ordinal_Position>
+		<Ordinal_Position>13</Ordinal_Position>
 		<IsNullable>1</IsNullable>
 		<IsBusinessKey>1</IsBusinessKey>
 		<DataType>NVARCHAR</DataType>
