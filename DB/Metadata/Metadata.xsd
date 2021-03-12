@@ -20,6 +20,7 @@
 									<xsd:enumeration value="NVARCHAR"/>
 									<xsd:enumeration value="VARCHAR"/>
 									<xsd:enumeration value="INT"/>
+									<xsd:enumeration value="BIGINT"/>
 									<xsd:enumeration value="DECIMAL"/>
 									<xsd:enumeration value="DATETIME"/>
 									<xsd:enumeration value="DATETIME2"/>
@@ -42,5 +43,11 @@
 			</xsd:element>
 			</xsd:sequence>
 		</xsd:complexType>
+    <xsd:unique name="UniqueAttribute">
+      <xsd:selector xpath="Attribute"/>
+      <xsd:field xpath="Schema"/>
+      <xsd:field xpath="Table"/>
+      <xsd:field xpath="Column"/>
+    </xsd:unique>
 	</xsd:element>
 </xsd:schema>
