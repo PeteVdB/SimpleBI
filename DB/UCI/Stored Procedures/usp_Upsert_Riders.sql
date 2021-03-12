@@ -28,9 +28,9 @@ BEGIN
 		WITH LZ
 		AS (
 			SELECT [FIT_DWH_ID] AS LZ_id
-				,BINARY_CHECKSUM([Function], [Last Name], [First Name], [Birth date], [Gender], [Category], [Country], [Continent], [Team Code], [Team Name], [UCIID]) AS LZ_CheckSum_BK
-				,BINARY_CHECKSUM([Function], [Last Name], [First Name], [Birth date], [Gender], [Category], [Country], [Continent], [Team Code], [Team Name], [UCIID]) AS LZ_CheckSum_AllAttributes
-				,[Function], [Last Name], [First Name], [Birth date], [Gender], [Category], [Country], [Continent], [Team Code], [Team Name], [UCIID]
+				,BINARY_CHECKSUM([Function], [Last Name], [First Name], [Birth date], [Birth date year], [Birth Year], [Gender], [Category], [Country], [Continent], [Team Code], [Team Name], [UCIID]) AS LZ_CheckSum_BK
+				,BINARY_CHECKSUM([Function], [Last Name], [First Name], [Birth date], [Birth date year], [Birth Year], [Gender], [Category], [Country], [Continent], [Team Code], [Team Name], [UCIID]) AS LZ_CheckSum_AllAttributes
+				,[Function], [Last Name], [First Name], [Birth date], [Birth date year], [Birth Year], [Gender], [Category], [Country], [Continent], [Team Code], [Team Name], [UCIID]
 			FROM [LZ_UCI].[Riders]
 			)
 		SELECT LZ.LZ_id
@@ -46,6 +46,8 @@ BEGIN
 AND LZ.[Last Name] = ST.[Last Name]
 AND LZ.[First Name] = ST.[First Name]
 AND LZ.[Birth date] = ST.[Birth date]
+AND LZ.[Birth date year] = ST.[Birth date year]
+AND LZ.[Birth Year] = ST.[Birth Year]
 AND LZ.[Gender] = ST.[Gender]
 AND LZ.[Category] = ST.[Category]
 AND LZ.[Country] = ST.[Country]
@@ -56,11 +58,11 @@ AND LZ.[UCIID] = ST.[UCIID]
 
 		-- new records => insert
 		INSERT INTO [UCI].[Riders] (
-			[Function], [Last Name], [First Name], [Birth date], [Gender], [Category], [Country], [Continent], [Team Code], [Team Name], [UCIID]
+			[Function], [Last Name], [First Name], [Birth date], [Birth date year], [Birth Year], [Gender], [Category], [Country], [Continent], [Team Code], [Team Name], [UCIID]
 			,[CheckSum_BK]
 			,[CheckSum_AllAttributes]
 			)
-		SELECT [Function], [Last Name], [First Name], [Birth date], [Gender], [Category], [Country], [Continent], [Team Code], [Team Name], [UCIID]
+		SELECT [Function], [Last Name], [First Name], [Birth date], [Birth date year], [Birth Year], [Gender], [Category], [Country], [Continent], [Team Code], [Team Name], [UCIID]
 			,LZ_CheckSum_BK
 			,LZ_CheckSum_AllAttributes
 		FROM #tmp_Riders T
@@ -71,7 +73,7 @@ AND LZ.[UCIID] = ST.[UCIID]
 
 		-- changed rows => update
 		UPDATE ST
-		SET [Function] = LZ.[Function], [Last Name] = LZ.[Last Name], [First Name] = LZ.[First Name], [Birth date] = LZ.[Birth date], [Gender] = LZ.[Gender], [Category] = LZ.[Category], [Country] = LZ.[Country], [Continent] = LZ.[Continent], [Team Code] = LZ.[Team Code], [Team Name] = LZ.[Team Name], [UCIID] = LZ.[UCIID]
+		SET [Function] = LZ.[Function], [Last Name] = LZ.[Last Name], [First Name] = LZ.[First Name], [Birth date] = LZ.[Birth date], [Birth date year] = LZ.[Birth date year], [Birth Year] = LZ.[Birth Year], [Gender] = LZ.[Gender], [Category] = LZ.[Category], [Country] = LZ.[Country], [Continent] = LZ.[Continent], [Team Code] = LZ.[Team Code], [Team Name] = LZ.[Team Name], [UCIID] = LZ.[UCIID]
 			,CheckSum_BK = T.LZ_CheckSum_BK
 			,CheckSum_AllAttributes = T.LZ_CheckSum_AllAttributes
 			,UpdateDate = @StartDate
